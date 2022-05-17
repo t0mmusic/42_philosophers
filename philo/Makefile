@@ -12,13 +12,20 @@
 
 NAME = philo
 
+CC = gcc
+FLAGS = -Wall -Wextra -Werror
+
+SRC = *.c
+
 all: $(NAME)
 
 $(NAME):
+	$(CC) $(FLAGS) -pthread $(SRC) -o $(NAME)
 
 bonus:
 
 clean:
+	rm -f $(NAME)
 
 fclean: clean
 

@@ -12,65 +12,100 @@
 
 #include "philo.h"
 
-/*	A modified version of atoi which only accepts positive numbers. If anything
-	other than a numeric character is found, it will return -1 to indicate an
-	error has occured.	*/
+/*	Creates a new philosopher and assigns it the appropriate starting values.
+	The philosopher is given a number, starting from 1. Once it has been
+	initialised, the philosopher thread can begin its process in the function
+	'philo_loop'.	*/
 
-void	activity_time(int time)
+void	new_philo(t_shared share, pthread_mutex_t left,
+	pthread_mutex_t right, int count)
 {
-	usleep(time);
+	t_philo		*new;
+
+	new = malloc(sizeof(*new));
+	new->share = share;
+	new->times_eaten = malloc(sizeof(int));
+	new->times_eaten[0] = 0;
+	new->left_fork = left;
+	new->right_fork = right;
+	new->number = count + 1;
+	pthread_create(&(new->philo), NULL, philo_loop, new);
 }
 
-long int	ft_atoi(const char *str)
+/*	Creates the appropriate number of philosophers. Each is given a left fork
+	and a right fork. The left fork of each new philosopher is the same as
+	the right fork of the previous, and the right fork of the last philospher
+	is the left fork of the first. If any of the inputs have been set to
+	negative one, an error is thrown and the program will end.
+	NOTE: Need to add a method for destroying mutexes at end of program.	*/
+
+void	*init_philos(t_shared share)
 {
-	int			i;
-	long int	r;
+	pthread_mutex_t	left_fork;
+	pthread_mutex_t	right_fork;
+	pthread_mutex_t	first_fork;
+	int				count;
 
-	i = 0;
-	r = 0;
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		r = r * 10 + (str[i] - '0');
-		i++;
-	}
-	if (str[i])
-		return (-1);
-	return (r);
-}
-
-int	*get_times(int ac, char **av)
-{
-	int	*times;
-	int	count;
-
-	times = malloc(sizeof(*times) * ac);
+	if (!error_inputs(share))
+		return (free_share(share));
+	pthread_mutex_init(&left_fork, NULL);
+	first_fork = left_fork;
 	count = 0;
-	while (count < ac - 1)
+	share.start_time = get_time();
+	while (count < share.num_of_philos)
 	{
-		times[count] = ft_atoi(av[count + 1]);
-		if (times[count] < 0)
-			return (NULL);
-		printf("Input: %i\n", times[count]);
+		if (count + 1 != share.num_of_philos && share.num_of_philos > 1)
+			pthread_mutex_init(&right_fork, NULL);
+		else
+			right_fork = first_fork;
+		new_philo(share, left_fork, right_fork, count);
 		count++;
+		left_fork = right_fork;
+		usleep(50);
 	}
-	times[count] = 0;
-	return (times);
+	while (share.complete[0] != share.num_of_philos)
+		;
+	return (free_share(share));
 }
+
+/*	Each philosopher will share a range of values, saved in a structure.
+	This function initialises these values, with the exception of start
+	time, which is initialised when the first philosopher is ready to
+	begin. If there has been no times_to_eat input, this value is set to
+	zero.	*/
+
+t_shared	set_values(int ac, char **av)
+{
+	t_shared		share;
+
+	share.num_of_philos = ft_atoi(av[1]);
+	share.time_to_die = ft_atoi(av[2]);
+	share.time_to_eat = ft_atoi(av[3]);
+	share.time_to_sleep = ft_atoi(av[4]);
+	if (ac == 6)
+		share.times_to_eat = ft_atoi(av[5]);
+	else
+		share.times_to_eat = -2;
+	share.dead = malloc(sizeof(*(share.dead)));
+	share.dead[0] = 0;
+	share.complete = malloc(sizeof(*(share.complete)));
+	share.complete[0] = 0;
+	share.fork_num = fork_numbers(share);
+	return (share);
+}
+
+/*	Checks if the correct number of inputs have been added. Then begins
+	initialising the philosophers.	*/
 
 int	main(int ac, char **av)
 {
-	struct timeval	current_time;
-	int				start_time;
-	int				*times;
-
-	gettimeofday(&current_time, NULL);
-	times = get_times(ac, av);
-	if (!times)
-		return (1);
-	start_time = current_time.tv_usec;
-	printf("Seconds: %ld\nMicro Seconds: %d\n",
-		current_time.tv_sec, current_time.tv_usec);
-	gettimeofday(&current_time, NULL);
-	printf("Time Elapsed: %d\n", current_time.tv_usec - start_time);
+	if (ac != 5 && ac != 6)
+	{
+		error_check(0);
+	}
+	else
+	{
+		init_philos(set_values(ac, av));
+	}
 	return (0);
 }
