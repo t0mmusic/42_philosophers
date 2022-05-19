@@ -6,7 +6,7 @@
 /*   By: jbrown <jbrown@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/13 08:58:50 by jbrown            #+#    #+#             */
-/*   Updated: 2022/05/13 15:11:58 by jbrown           ###   ########.fr       */
+/*   Updated: 2022/05/19 16:03:44 by jbrown           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,7 @@
 	initialised, the philosopher thread can begin its process in the function
 	'philo_loop'.	*/
 
-void	new_philo(t_shared share, pthread_mutex_t left,
-	pthread_mutex_t right, int count)
+void	new_philo(t_shared share, int count)
 {
 	t_philo		*new;
 
@@ -26,42 +25,44 @@ void	new_philo(t_shared share, pthread_mutex_t left,
 	new->share = share;
 	new->times_eaten = malloc(sizeof(int));
 	new->times_eaten[0] = 0;
-	new->left_fork = left;
-	new->right_fork = right;
+	new->left_fork = &share.forks[count];
+	if (count + 1 != share.num_of_philos)
+		new->right_fork = &share.forks[count + 1];
+	else
+		new->right_fork = &share.forks[0];
 	new->number = count + 1;
 	pthread_create(&(new->philo), NULL, philo_loop, new);
 }
 
-/*	Creates the appropriate number of philosophers. Each is given a left fork
-	and a right fork. The left fork of each new philosopher is the same as
-	the right fork of the previous, and the right fork of the last philospher
-	is the left fork of the first. If any of the inputs have been set to
-	negative one, an error is thrown and the program will end.
-	NOTE: Need to add a method for destroying mutexes at end of program.	*/
+void	get_forks(t_shared *share)
+{
+	int	count;
+
+	share->forks = malloc(sizeof(*share->forks) * share->num_of_philos);
+	count = 0;
+	while (count < share->num_of_philos)
+	{
+		pthread_mutex_init(&share->forks[count], NULL);
+		count++;
+	}
+}
+
+/*	Prepares forks for the philosophers, then loops until the philosophers
+	have completed their tasks (may be an infinite loop if philosphers
+	never starve and don't have a limit on times to eat).	*/
 
 void	*init_philos(t_shared share)
 {
-	pthread_mutex_t	left_fork;
-	pthread_mutex_t	right_fork;
-	pthread_mutex_t	first_fork;
-	int				count;
+	int		count;	
 
 	if (!error_inputs(share))
 		return (free_share(share));
-	pthread_mutex_init(&left_fork, NULL);
-	first_fork = left_fork;
 	count = 0;
 	share.start_time = get_time();
 	while (count < share.num_of_philos)
 	{
-		if (count + 1 != share.num_of_philos && share.num_of_philos > 1)
-			pthread_mutex_init(&right_fork, NULL);
-		else
-			right_fork = first_fork;
-		new_philo(share, left_fork, right_fork, count);
+		new_philo(share, count);
 		count++;
-		left_fork = right_fork;
-		usleep(50);
 	}
 	while (share.complete[0] != share.num_of_philos)
 		;
@@ -90,7 +91,11 @@ t_shared	set_values(int ac, char **av)
 	share.dead[0] = 0;
 	share.complete = malloc(sizeof(*(share.complete)));
 	share.complete[0] = 0;
+	share.fork_num = malloc(sizeof(*share.fork_num));
 	share.fork_num = fork_numbers(share);
+	share.talk = malloc(sizeof(*share.talk));
+	pthread_mutex_init(share.talk, NULL);
+	get_forks(&share);
 	return (share);
 }
 

@@ -6,7 +6,7 @@
 /*   By: jbrown <jbrown@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/13 10:58:42 by jbrown            #+#    #+#             */
-/*   Updated: 2022/05/13 16:10:31 by jbrown           ###   ########.fr       */
+/*   Updated: 2022/05/19 15:07:16 by jbrown           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,17 @@
 
 typedef struct s_shared
 {
-	int			num_of_philos;
-	int			time_to_die;
-	int			time_to_eat;
-	int			time_to_sleep;
-	int			times_to_eat;
-	long int	start_time;
-	int			*complete;
-	int			*dead;
-	int			*fork_num;
+	pthread_mutex_t	*talk;
+	pthread_mutex_t	*forks;
+	int				num_of_philos;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				times_to_eat;
+	long int		start_time;
+	int				*complete;
+	int				*dead;
+	int				*fork_num;
 }	t_shared;
 
 typedef struct s_philo
@@ -39,8 +41,8 @@ typedef struct s_philo
 	int				number;
 	long int		*time_left;
 	int				*times_eaten;
-	pthread_mutex_t	left_fork;
-	pthread_mutex_t	right_fork;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
 	t_shared		share;
 }	t_philo;
 
@@ -57,5 +59,6 @@ int			*fork_numbers(t_shared share);
 
 void		*free_philo(t_philo *philo);
 void		*free_share(t_shared share);
+void		curtesy_wait(t_philo philo);
 
 #endif

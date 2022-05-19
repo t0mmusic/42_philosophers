@@ -6,7 +6,7 @@
 /*   By: jbrown <jbrown@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/14 15:12:23 by jbrown            #+#    #+#             */
-/*   Updated: 2022/05/14 15:12:23 by jbrown           ###   ########.fr       */
+/*   Updated: 2022/05/19 16:11:25 by jbrown           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,23 @@ void	print_time(t_philo philo, char *activity)
 {
 	long int	current_time;
 
-	current_time = get_time() - philo.share.start_time;
-	printf("%li: Philosopher %i %s\n", current_time, philo.number, activity);
+	pthread_mutex_lock(philo.share.talk);
+	if (!philo.share.dead[0])
+	{
+		current_time = get_time() - philo.share.start_time;
+		printf("%5lims Philosopher %i %s\n",
+			current_time, philo.number, activity);
+	}
+	pthread_mutex_unlock(philo.share.talk);
+}
+
+/*	If a philosopher has eaten in less than half the time they have until
+	they starve, they will wait half a millisecond before attempting to
+	eat again. This prevents starvation on odd numbers of philosopher.	*/
+
+void	curtesy_wait(t_philo philo)
+{
+	if (get_elapsed_time(philo) - philo.share.start_time
+		< philo.share.time_to_die / 2)
+		usleep(600);
 }
