@@ -6,7 +6,7 @@
 /*   By: jbrown <jbrown@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/13 09:13:49 by jbrown            #+#    #+#             */
-/*   Updated: 2022/05/19 14:16:53 by jbrown           ###   ########.fr       */
+/*   Updated: 2022/05/20 09:08:36 by jbrown           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,10 @@ void	philo_eat(t_philo philo)
 		philo.share.fork_num[0] = 0;
 	else
 		philo.share.fork_num[philo.number] = 0;
-	print_time(philo, "has taken a fork.");
 	pthread_mutex_lock(philo.left_fork);
 	print_time(philo, "has taken a fork.");
 	pthread_mutex_lock(philo.right_fork);
+	print_time(philo, "has taken a fork.");
 	philo_activity(philo, philo.share.time_to_eat, 0, "is eating.");
 	pthread_mutex_unlock(philo.left_fork);
 	pthread_mutex_unlock(philo.right_fork);
