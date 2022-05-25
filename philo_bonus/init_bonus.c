@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrown <jbrown@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbrown <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 10:15:20 by jbrown            #+#    #+#             */
-/*   Updated: 2022/05/23 16:49:33 by jbrown           ###   ########.fr       */
+/*   Updated: 2022/05/24 15:25:19 by jbrown           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ t_shared	*set_values(int ac, char **av)
 		share->times_to_eat = ft_atoi(av[5]);
 	else
 		share->times_to_eat = -2;
+	share->times_eaten = 0;
 	set_sem(share);
 	return (share);
 }

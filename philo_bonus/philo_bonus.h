@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrown <jbrown@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbrown <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/13 10:58:42 by jbrown            #+#    #+#             */
-/*   Updated: 2022/05/23 16:19:44 by jbrown           ###   ########.fr       */
+/*   Updated: 2022/05/25 19:28:48 by jbrown           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <sys/time.h>
 # include <string.h>
 # include <semaphore.h>
+# include <fcntl.h>
 # include <signal.h>
 
 typedef struct s_shared
@@ -46,7 +47,6 @@ long int	ft_atoi(const char *str);
 long int	get_time(void);
 long int	get_elapsed_time(t_shared *share);
 void		print_time(t_shared *share, char *activity, int number);
-int			error_check(int error);
 int			error_inputs(t_shared share);
 
 void		*philo_loop(void *info);
@@ -58,5 +58,9 @@ void		curtesy_wait(t_shared *share);
 
 void		*check_fed(void *info);
 void		*check_death(void *info);
+
+void		philo_eat(t_shared *share);
+void		philo_sleep(t_shared *share);
+
 
 #endif
