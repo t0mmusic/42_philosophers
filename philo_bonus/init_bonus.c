@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrown <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: jbrown <jbrown@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 10:15:20 by jbrown            #+#    #+#             */
-/*   Updated: 2022/05/24 15:25:19 by jbrown           ###   ########.fr       */
+/*   Updated: 2022/05/26 08:58:11 by jbrown           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ void	set_sem(t_shared *share)
 	sem_unlink("forks");
 	sem_unlink("print");
 	sem_unlink("end");
-	share->forks = malloc(sizeof(share->forks));
 	share->forks = sem_open("forks", O_CREAT | O_EXCL, S_IRWXU,
 			share->num_of_philos);
 	share->print = sem_open("print", O_CREAT | O_EXCL, S_IRWXU, 1);

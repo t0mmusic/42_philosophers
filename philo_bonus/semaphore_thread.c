@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   semaphore_thread.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrown <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: jbrown <jbrown@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/23 09:54:39 by jbrown            #+#    #+#             */
-/*   Updated: 2022/05/25 16:47:48 by jbrown           ###   ########.fr       */
+/*   Updated: 2022/05/26 09:27:11 by jbrown           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,17 @@ void	*check_fed(void *info)
 		}
 		usleep(500);
 	}
+}
+
+/*	If a philosopher has eaten in less than half the time they have until
+	they starve, they will wait 600 microseconds before attempting to
+	eat again. This prevents starvation on odd numbers of philosopher.	*/
+
+void	curtesy_wait(t_shared *share)
+{
+	if (get_elapsed_time(share) - share->start_time
+		< share->time_to_die / 2)
+		usleep(600);
 }
 
 /*	The philosopher sleeps for the appropriate amount of time, then begins

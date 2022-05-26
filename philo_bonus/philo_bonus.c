@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbrown <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: jbrown <jbrown@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/19 17:27:44 by jbrown            #+#    #+#             */
-/*   Updated: 2022/05/25 20:24:10 by jbrown           ###   ########.fr       */
+/*   Updated: 2022/05/26 09:38:26 by jbrown           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,9 @@ void	split_process(int count, t_shared *share)
 	}
 }
 
+/*	Checks to see if the values input by the user are valid. If the number
+	is zero or less, it is not considered valid.	*/
+
 int	error_check(t_shared *share)
 {
 	if (share->num_of_philos <= 0)
@@ -42,7 +45,7 @@ int	error_check(t_shared *share)
 		return (1);
 	if (share->time_to_sleep <= 0)
 		return (1);
-	if (share->times_to_eat == -1)
+	if (share->times_to_eat <= 0 && share->times_to_eat != -2)
 		return (1);
 	return (0);
 }
@@ -67,10 +70,15 @@ void	set_forks(t_shared *share)
 	}
 }
 
+/*	Once the child processes are in their respective loops, the main process
+	will wait until the 'end' semaphore is posted. This indicates that the
+	program has completed its cycle, so the parent process sends a SIGKILL to
+	all of the child processes using their stored PIDs.	*/
+
 void	pause_time(t_shared *share)
 {
 	int	count;
-	
+
 	share->pid = malloc(sizeof(*share->pid) * share->num_of_philos);
 	share->start_time = get_time();
 	set_forks(share);
@@ -83,21 +91,24 @@ void	pause_time(t_shared *share)
 	}
 }
 
+/*	Checks to make sure the user has entered the correct number of arguments
+	and that they are valid. Once the program has completed, it frees the
+	malloced structure.	*/
+
 int	main(int ac, char **av)
 {
 	t_shared	*share;
-	
+
 	if (ac != 5 && ac != 6)
 	{
-		printf("Incorrect number of arguments.\n");
+		helpful_info();
 		return (1);
 	}
 	share = set_values(ac, av);
 	if (error_check(share))
-	{
-		printf("Values not permitted.\n");
-		return (1);
-	}
-	pause_time(share);
+		helpful_info();
+	else
+		pause_time(share);
+	free(share);
 	return (0);
 }

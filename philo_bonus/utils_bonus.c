@@ -6,7 +6,7 @@
 /*   By: jbrown <jbrown@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/14 15:12:23 by jbrown            #+#    #+#             */
-/*   Updated: 2022/05/23 15:53:23 by jbrown           ###   ########.fr       */
+/*   Updated: 2022/05/26 09:18:45 by jbrown           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,13 +69,18 @@ void	print_time(t_shared *share, char *activity, int num)
 	sem_post(share->print);
 }
 
-/*	If a philosopher has eaten in less than half the time they have until
-	they starve, they will wait half a millisecond before attempting to
-	eat again. This prevents starvation on odd numbers of philosopher.	*/
+/*	Informative message telling the user what the expected inputs are.
+	Will be displayed when incorrect arguments are input.	*/
 
-void	curtesy_wait(t_shared *share)
+void	helpful_info(void)
 {
-	if (get_elapsed_time(share) - share->start_time
-		< share->time_to_die / 2)
-		usleep(600);
+	printf(" ------------------------------------------\n");
+	printf("|   Unexpected or incorrect input!         |\n");
+	printf("|   Expected 4 or 5 positive integers.     |\n");
+	printf("|   1. Number of Philosopers.              |\n");
+	printf("|   2. Time until starvation.              |\n");
+	printf("|   3. Time it takes to eat.               |\n");
+	printf("|   4. Time it takes to sleep.             |\n");
+	printf("|   5. Number of times to eat (optional).  |\n");
+	printf(" ------------------------------------------\n");
 }

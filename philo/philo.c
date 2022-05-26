@@ -6,7 +6,7 @@
 /*   By: jbrown <jbrown@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/13 08:58:50 by jbrown            #+#    #+#             */
-/*   Updated: 2022/05/19 16:03:44 by jbrown           ###   ########.fr       */
+/*   Updated: 2022/05/26 09:29:04 by jbrown           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ void	new_philo(t_shared share, int count)
 	new->number = count + 1;
 	pthread_create(&(new->philo), NULL, philo_loop, new);
 }
+
+/*	Creates a mutex for every fork, equal to the number of philosophers.	*/
 
 void	get_forks(t_shared *share)
 {

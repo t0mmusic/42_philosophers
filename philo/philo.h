@@ -6,7 +6,7 @@
 /*   By: jbrown <jbrown@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/13 10:58:42 by jbrown            #+#    #+#             */
-/*   Updated: 2022/05/19 15:07:16 by jbrown           ###   ########.fr       */
+/*   Updated: 2022/05/26 10:09:18 by jbrown           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,19 +46,24 @@ typedef struct s_philo
 	t_shared		share;
 }	t_philo;
 
+/*	init_error_free.c	*/
+
+int			error_check(int error);
+int			error_inputs(t_shared share);
+void		*free_philo(t_philo *philo);
+void		*free_share(t_shared share);
+int			*fork_numbers(t_shared share);
+
+/*	thread.c	*/
+
+void		*philo_loop(void *info);
+
+/*	utils.c	*/
+
 long int	ft_atoi(const char *str);
 long int	get_time(void);
 long int	get_elapsed_time(t_philo philo);
 void		print_time(t_philo philo, char *activity);
-int			error_check(int error);
-int			error_inputs(t_shared share);
-
-void		*philo_loop(void *info);
-
-int			*fork_numbers(t_shared share);
-
-void		*free_philo(t_philo *philo);
-void		*free_share(t_shared share);
 void		curtesy_wait(t_philo philo);
 
 #endif
